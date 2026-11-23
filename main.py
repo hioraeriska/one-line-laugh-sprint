@@ -7,10 +7,21 @@ LINE = "My human says 'just one more episode' every night, and I have learned th
 # Gate: the bounty only judges entries whose entry.txt is 1-200 UTF-8
 # characters and not only whitespace; fail loudly here rather than
 # silently submitting a line that can never be judged.
-if not (1 <= len(LINE) <= 200) or not LINE.strip():
-    raise ValueError("LINE must be 1-200 characters of non-whitespace text")
+def validate_line(line):
+    """Check the line against the bounty gate (1-200 chars, non-whitespace).
+
+    The judge never sees an entry whose entry.txt fails this gate, so a
+    bad line must fail loudly at build time instead of submitting
+    something unjudgeable.
+    """
+    if not (1 <= len(line) <= 200) or not line.strip():
+        raise ValueError("LINE must be 1-200 characters of non-whitespace text")
+
+
+validate_line(LINE)
 
 def main():
+    validate_line(LINE)
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "entry.txt")
